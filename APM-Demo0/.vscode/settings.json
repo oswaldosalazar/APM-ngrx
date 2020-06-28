@@ -1,5 +1,6 @@
 // Place your settings in this file to overwrite default and user settings.
 {
     "html.format.wrapAttributes": "force-aligned",
-    "prettier.useEditorConfig": false
+    "prettier.useEditorConfig": false,
+    "python.pythonPath": "/usr/local/bin/python"
 }

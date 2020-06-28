@@ -16,7 +16,7 @@ export class LoginComponent implements OnInit {
   maskUserName: boolean;
 
   constructor(
-    private store: Store<any>,
+    private store: Store<fromUser.UserState>,
     private authService: AuthService,
     private router: Router
   ) {}
