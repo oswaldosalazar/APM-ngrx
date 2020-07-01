@@ -82,13 +82,13 @@ export class CreateProduct implements Action {
 }
 
 export class CreateProductSuccess implements Action {
-  readonly type = ProductActionTypes.CreateProduct;
+  readonly type = ProductActionTypes.CreateProductSuccess;
 
   constructor(public payload: Product) { }
 }
 
 export class CreateProductFail implements Action {
-  readonly type = ProductActionTypes.CreateProduct;
+  readonly type = ProductActionTypes.CreateProductFail;
 
   constructor(public payload: string) { }
 }

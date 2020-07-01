@@ -33,8 +33,8 @@ export class ProductEffects {
     map((action: productActions.UpdateProduct) => action.payload),
     mergeMap((product: Product) =>
       this.productService.updateProduct(product).pipe(
-        map(updateProduct => (new productActions
-          .UpdateProductSuccess(updateProduct))
+        map(updatedProduct => (new productActions
+          .UpdateProductSuccess(updatedProduct))
         ), catchError(err => of(new productActions.UpdateProductFail(err)))
       )
     )
@@ -46,10 +46,22 @@ export class ProductEffects {
     map((action: productActions.CreateProduct) => action.payload),
     mergeMap((product: Product) =>
       this.productService.createProduct(product).pipe(
-        map(createProduct => (new productActions
-          .CreateProductSuccess(createProduct))
+        map(newProduct => (new productActions
+          .CreateProductSuccess(newProduct))
         ), catchError(err => of(new productActions.CreateProductFail(err)))
       )
     )
-  )
+  );
+
+  @Effect()
+  deleteProduct$: Observable<Action> = this.actions$.pipe(
+    ofType(productActions.ProductActionTypes.DeleteProduct),
+    map((action: productActions.DeleteProduct) => action.payload),
+    mergeMap((productId: number) =>
+      this.productService.deleteProduct(productId).pipe(
+        map(() => (new productActions.DeleteProductSuccess(productId))),
+        catchError(err => of(new productActions.DeleteProductFail(err)))
+      )
+    )
+  );
 }

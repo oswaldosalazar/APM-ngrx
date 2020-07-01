@@ -1,7 +1,7 @@
 import { Component, OnDestroy, OnInit } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { select, Store } from '@ngrx/store';
-import { Subscription } from 'rxjs';
+import { Observable, of, Subscription } from 'rxjs';
 import { takeWhile } from 'rxjs/operators';
 
 import { GenericValidator } from '../../shared/generic-validator';
@@ -18,7 +18,7 @@ import * as fromProduct from '../state/product.reducer';
 })
 export class ProductEditComponent implements OnInit, OnDestroy {
   pageTitle = 'Product Edit';
-  errorMessage = '';
+  // errorMessage = '';
   productForm: FormGroup;
 
   product: Product | null;
@@ -31,6 +31,7 @@ export class ProductEditComponent implements OnInit, OnDestroy {
   };
   private genericValidator: GenericValidator;
   componentActive = true;
+  errorMessage$: Observable<string>;
 
   constructor(
     private store: Store<fromProduct.State>,
@@ -134,17 +135,11 @@ export class ProductEditComponent implements OnInit, OnDestroy {
 
   deleteProduct(): void {
     if (this.product && this.product.id) {
-      if (
-        confirm(
-          `Really delete the product: ${this.product.productName}?`
-        )
+      if (confirm
+        (`Really delete the product: ${this.product.productName}?`)
       ) {
-        this.productService.deleteProduct(this.product.id).subscribe(
-          () =>
-            this.store.dispatch(
-              new productActions.ClearCurrentProduct()
-            ),
-          err => (this.errorMessage = err)
+        this.store.dispatch(
+          new productActions.DeleteProduct(this.product.id)
         );
       }
     } else {
@@ -162,14 +157,13 @@ export class ProductEditComponent implements OnInit, OnDestroy {
         const p = { ...this.product, ...this.productForm.value };
 
         if (p.id === 0) {
-          this.productService.createProduct(p).subscribe(
-            product => this.store.dispatch(
-              new productActions.SetCurrentProduct(product)
-            ), err => this.errorMessage = err
-          );
+          this.store.dispatch(new productActions.CreateProduct(p))
         } else {
           this.store.dispatch(new productActions.UpdateProduct(p));
         }
+      } else {
+        this.errorMessage$ =
+          of('Please correct the validation errors');
       }
     }
   }
