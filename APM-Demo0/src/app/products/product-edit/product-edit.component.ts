@@ -1,19 +1,17 @@
-import { Component, OnInit, OnDestroy } from '@angular/core';
+import { Component, OnDestroy, OnInit } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
-
+import { select, Store } from '@ngrx/store';
 import { Subscription } from 'rxjs';
-
-import { Product } from '../product';
-import { ProductService } from '../product.service';
-import { GenericValidator } from '../../shared/generic-validator';
-import { NumberValidators } from '../../shared/number.validator';
-
-/* NgRx */
-import { Store, select } from '@ngrx/store';
-import * as fromProduct from '../state/product.reducer';
-import * as productActions from '../state/product.actions';
 import { takeWhile } from 'rxjs/operators';
 
+import { GenericValidator } from '../../shared/generic-validator';
+import { NumberValidators } from '../../shared/number.validator';
+import { Product } from '../product';
+import { ProductService } from '../product.service';
+import * as productActions from '../state/product.actions';
+import * as fromProduct from '../state/product.reducer';
+
+/* NgRx */
 @Component({
   selector: 'pm-product-edit',
   templateUrl: './product-edit.component.html'
@@ -65,14 +63,11 @@ export class ProductEditComponent implements OnInit, OnDestroy {
   ngOnInit(): void {
     // Define the form group
     this.productForm = this.fb.group({
-      productName: [
-        '',
-        [
-          Validators.required,
-          Validators.minLength(3),
-          Validators.maxLength(50)
-        ]
-      ],
+      productName: ['', [
+        Validators.required,
+        Validators.minLength(3),
+        Validators.maxLength(50)
+      ]],
       productCode: ['', Validators.required],
       starRating: ['', NumberValidators.range(1, 5)],
       description: ''
@@ -81,8 +76,7 @@ export class ProductEditComponent implements OnInit, OnDestroy {
     // Watch for changes to the currently selected product
     // TODO: Unsubscribe
     this.store.pipe(
-      select(fromProduct.getCurrentProduct)
-      ,
+      select(fromProduct.getCurrentProduct),
       takeWhile(() => this.componentActive)
     ).subscribe(
       currentProduct => this.displayProduct(currentProduct)
@@ -165,27 +159,16 @@ export class ProductEditComponent implements OnInit, OnDestroy {
         // Copy over all of the original product properties
         // Then copy over the values from the form
         // This ensures values not on the form, such as the Id, are retained
-        const p = {
-          ...this.product,
-          ...this.productForm.value
-        };
+        const p = { ...this.product, ...this.productForm.value };
 
         if (p.id === 0) {
           this.productService.createProduct(p).subscribe(
-            product =>
-              this.store.dispatch(
-                new productActions.SetCurrentProduct(product)
-              ),
-            err => (this.errorMessage = err)
+            product => this.store.dispatch(
+              new productActions.SetCurrentProduct(product)
+            ), err => this.errorMessage = err
           );
         } else {
-          this.productService.updateProduct(p).subscribe(
-            product =>
-              this.store.dispatch(
-                new productActions.SetCurrentProduct(product)
-              ),
-            err => (this.errorMessage = err)
-          );
+          this.store.dispatch(new productActions.UpdateProduct(p));
         }
       }
     }
