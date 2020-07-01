@@ -1,15 +1,13 @@
-import { Component, OnInit, OnDestroy } from '@angular/core';
-
-import { Product } from '../product';
-import { ProductService } from '../product.service';
+import { Component, OnDestroy, OnInit } from '@angular/core';
+import { select, Store } from '@ngrx/store';
 import { Observable } from 'rxjs';
-
-/* NgRx */
-import { Store, select } from '@ngrx/store';
-import * as fromProduct from '../state/product.reducer';
-import * as productActions from '../state/product.actions';
 import { takeWhile } from 'rxjs/operators';
 
+import { Product } from '../product';
+import * as productActions from '../state/product.actions';
+import * as fromProduct from '../state/product.reducer';
+
+/* NgRx */
 @Component({
   selector: 'pm-product-list',
   templateUrl: './product-list.component.html',
@@ -31,7 +29,6 @@ export class ProductListComponent implements OnInit, OnDestroy {
 
   constructor(
     private store: Store<fromProduct.State>,
-    private productService: ProductService
   ) { }
 
   ngOnInit(): void {

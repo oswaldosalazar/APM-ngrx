@@ -7,7 +7,6 @@ import { takeWhile } from 'rxjs/operators';
 import { GenericValidator } from '../../shared/generic-validator';
 import { NumberValidators } from '../../shared/number.validator';
 import { Product } from '../product';
-import { ProductService } from '../product.service';
 import * as productActions from '../state/product.actions';
 import * as fromProduct from '../state/product.reducer';
 
@@ -35,8 +34,7 @@ export class ProductEditComponent implements OnInit, OnDestroy {
 
   constructor(
     private store: Store<fromProduct.State>,
-    private fb: FormBuilder,
-    private productService: ProductService
+    private fb: FormBuilder
   ) {
     // Defines all of the validation messages for the form.
     // These could instead be retrieved from a file or database.
